@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "BEACON: Bus and External-link Awareness, Continuity, Observation, and Notification for FTC"
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+authors:
+  - name: "The Allsparks"
+    alias: "FTC Team 36117"
+    website: "https://github.com/The-Allsparks"
+repository-code: "https://github.com/The-Allsparks/BEACON"
+url: "https://github.com/The-Allsparks/BEACON"
+abstract: >-
+  BEACON is a phased communications-health and safe-state library for
+  FIRST Tech Challenge robots. It begins with passive observation and
+  preflight verification. Warnings, correlation, communication-loss
+  safe states, bounded recovery, and degraded operation remain disabled
+  until validated.
+keywords:
+  - FIRST Tech Challenge
+  - FTC
+  - communications
+  - fault detection
+  - health monitoring
+  - safe state
+  - robotics
+license: MIT
+version: "0.1.0-SNAPSHOT"
+date-released: "2026-08-17"
