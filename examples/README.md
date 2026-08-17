@@ -17,29 +17,32 @@ See [phase-0-plan.md](../docs/communications-health/phase-0-plan.md).
 
 ```java
 BeaconSession beacon = BeaconSession.create(BeaconFeatureFlags.manualReports());
+FakeClock clock = new FakeClock(1L);
 beacon.report(HealthReport.healthy(
         LinkId.of("frontCamera"),
         FailureDomain.USB_CAMERA,
-        /* sourceTimestampNanos */ 0L,
+        clock.nanoTime(),
         "ViDAR"));
 beacon.report(HealthReport.healthy(
         LinkId.of("elevatorEncoder"),
         FailureDomain.SENSOR_BUS,
-        0L,
+        clock.nanoTime(),
         "MIMIC"));
 beacon.report(HealthReport.healthy(
         LinkId.of("batteryTelemetry"),
         FailureDomain.ELECTRICAL,
-        0L,
+        clock.nanoTime(),
         "AMPER"));
 beacon.report(HealthReport.healthy(
         LinkId.of("localization"),
         FailureDomain.SOFTWARE_LOOP,
-        0L,
+        clock.nanoTime(),
         "Pedro"));
 ```
 
-BEACON only stores and logs. It does not probe or restart devices.
+Use a positive source timestamp. `0` means never observed and snapshots as `UNKNOWN`, not `HEALTHY`. If you stop reporting, the registry ages the last valid time: delayed still maps to `HEALTHY`, then `STALE`, then `LOST`.
+
+BEACON only stores, ages, and logs. It does not probe or restart devices.
 
 ## Later phases
 

@@ -3,10 +3,10 @@
 Living tracker for orchestrator selection. Update after each merged PR or when issue readiness changes.
 
 **Last updated:** 2026-08-17  
-**Audited commit:** `984f47a69e7c50f4bb9724fb5d626ddaab6201e4`  
+**Audited commit:** `56a85b5` (`main` after PR #28)  
 **Automatic merge:** false (human approval required)  
 **Max active implementation subagents:** 1  
-**Open implementation PR:** [#28](https://github.com/The-Allsparks/BEACON/pull/28) (draft → ready after audit docs land)
+**Open implementation PR:** issue #30 on `phase-1/30-freshness-sampling`
 
 ## Priority model
 
@@ -30,21 +30,21 @@ An issue is **ready** only when requirements are clear, dependencies are resolve
 
 ## Current selection
 
-Until PR #28 is merged, **do not start a second implementation PR**. Highest-priority next software issue: [#30](https://github.com/The-Allsparks/BEACON/issues/30) (audit A1/C1/T1).
+PR #28 is merged. Current implementation: [#30](https://github.com/The-Allsparks/BEACON/issues/30) freshness-aware sampling.
 
 | Issue | Priority | Readiness | Dependencies | Current status | Assigned subagent | Branch | Pull request | CI status | Merge status | Blocker | Next action |
 |-------|----------|-----------|--------------|----------------|-------------------|--------|--------------|-----------|--------------|---------|-------------|
-| [#28](https://github.com/The-Allsparks/BEACON/pull/28) Phase 0 scaffold | 1 | Ready for human review after audit docs | none | Draft PR | orchestrator | `scaffold/phase-0` | [#28](https://github.com/The-Allsparks/BEACON/pull/28) | prior success; re-run after audit push | not authorized | `AUTOMATIC_MERGE=false` | Push audit docs; mark ready; request human merge |
-| [#30](https://github.com/The-Allsparks/BEACON/issues/30) Freshness-aware sampling | 2 | Technically ready; process-wait on #28 | #9, #10, PR #28 | Open | review until #28 resolves | — | — | — | — | Open implementation PR #28 | Subagent review first |
-| [#32](https://github.com/The-Allsparks/BEACON/issues/32) Branch protection | 3 | Blocked on human policy | none | Open | — | n/a | — | — | — | Who must approve? | Maintainer decision |
-| [#31](https://github.com/The-Allsparks/BEACON/issues/31) Pin Actions SHAs | 4 | Ready after #28 | none | Open | — | — | — | — | — | Open PR #28 | Follow-up PR |
-| [#10](https://github.com/The-Allsparks/BEACON/issues/10) Registry overhead AC | 5 | Blocked on hardware | PR #28 | Open; software done | — | — | — | — | — | Control Hub | Measure when available |
-| [#11](https://github.com/The-Allsparks/BEACON/issues/11)–[#14](https://github.com/The-Allsparks/BEACON/issues/14) Sibling reports | 6 | Blocked on sibling DTOs | #10 | Open; docs exist | — | — | — | — | — | Sibling contracts | Manual `HealthReport` only |
-| [#15](https://github.com/The-Allsparks/BEACON/issues/15) Preflight inspector | 7 | Not ready | #30 | Open | — | — | — | — | — | Time-honest registry | After #30 |
-| [#16](https://github.com/The-Allsparks/BEACON/issues/16) Auto event history | 8 | Not ready | #10 overhead | Open; logger exists | — | — | — | — | — | Overhead unknown | After measurement or bound |
-| [#3](https://github.com/The-Allsparks/BEACON/issues/3) Stop latency | 9 | Blocked on hardware | adult supervision | Open | — | — | — | — | — | Restrained robot | Do not fake as hardware |
-| [#2](https://github.com/The-Allsparks/BEACON/issues/2)/[#20](https://github.com/The-Allsparks/BEACON/issues/20)/[#21](https://github.com/The-Allsparks/BEACON/issues/21) DS safe-stop | 10 | Blocked | public freshness API | Open | — | — | — | — | — | Readiness gate unmet | Do not implement |
-| [#27](https://github.com/The-Allsparks/BEACON/issues/27) SystemCore | 11 | Blocked | authoritative docs | Open | — | — | — | — | — | No docs | Keep unavailable |
+| [#28](https://github.com/The-Allsparks/BEACON/pull/28) Phase 0 scaffold | done | merged | none | Merged to `main` | — | `scaffold/phase-0` | [#28](https://github.com/The-Allsparks/BEACON/pull/28) | success | merged | none | Close #6–#9 |
+| [#30](https://github.com/The-Allsparks/BEACON/issues/30) Freshness-aware sampling | 1 | Ready | #9, #10 software | Implementing | orchestrator | `phase-1/30-freshness-sampling` | pending | pending | — | none | Test, open PR, wait for CI |
+| [#32](https://github.com/The-Allsparks/BEACON/issues/32) Branch protection | 2 | Blocked on human policy | none | Open | — | n/a | — | — | — | Who must approve? | Maintainer decision |
+| [#31](https://github.com/The-Allsparks/BEACON/issues/31) Pin Actions SHAs | 3 | Ready after #30 PR resolves | none | Open | — | — | — | — | — | Open #30 PR | Follow-up PR |
+| [#10](https://github.com/The-Allsparks/BEACON/issues/10) Registry overhead AC | 4 | Blocked on hardware | none | Open; software done | — | — | — | — | — | Control Hub | Measure when available |
+| [#11](https://github.com/The-Allsparks/BEACON/issues/11)–[#14](https://github.com/The-Allsparks/BEACON/issues/14) Sibling reports | 5 | Blocked on sibling DTOs | #10 | Open; docs exist | — | — | — | — | — | Sibling contracts | Manual `HealthReport` only |
+| [#15](https://github.com/The-Allsparks/BEACON/issues/15) Preflight inspector | 6 | Not ready | #30 | Open | — | — | — | — | — | Time-honest registry | After #30 merges |
+| [#16](https://github.com/The-Allsparks/BEACON/issues/16) Auto event history | 7 | Not ready | #10 overhead | Open; logger exists | — | — | — | — | — | Overhead unknown | After measurement or bound |
+| [#3](https://github.com/The-Allsparks/BEACON/issues/3) Stop latency | 8 | Blocked on hardware | adult supervision | Open | — | — | — | — | — | Restrained robot | Do not fake as hardware |
+| [#2](https://github.com/The-Allsparks/BEACON/issues/2)/[#20](https://github.com/The-Allsparks/BEACON/issues/20)/[#21](https://github.com/The-Allsparks/BEACON/issues/21) DS safe-stop | 9 | Blocked | public freshness API | Open | — | — | — | — | — | Readiness gate unmet | Do not implement |
+| [#27](https://github.com/The-Allsparks/BEACON/issues/27) SystemCore | 10 | Blocked | authoritative docs | Open | — | — | — | — | — | No docs | Keep unavailable |
 | [#29](https://github.com/The-Allsparks/BEACON/issues/29) Roadmap epic | tracking | n/a | none | Open | orchestrator | n/a | n/a | n/a | n/a | none | Update after each merge |
 
 ## Phase 0 issue hygiene (software vs remaining AC)
@@ -69,4 +69,4 @@ Implemented in PR #28 tree; close **after merge** if remaining ACs are explicitl
 - Do not merge without human approval.
 - Do not implement Phase 5–9 active behavior.
 - Do not claim hardware validation.
-- Do not open a second implementation PR while #28 is unresolved.
+- One implementation PR at a time.

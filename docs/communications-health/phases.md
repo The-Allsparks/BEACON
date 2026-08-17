@@ -20,7 +20,7 @@ Allow ViDAR, MIMIC, AMPER, Pedro, and robot code to submit reports. BEACON only 
 
 **Acceptance:** reports are time-correlated; BEACON does not probe or restart devices; integration can be removed without subsystem rewrites; loop overhead is measured.
 
-**Status:** API present; flag default off.
+**Status:** time-correlated sampling implemented in the registry; flag default off; Control Hub overhead not measured.
 
 ## Phase 2 — Preflight inspection
 

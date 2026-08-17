@@ -40,7 +40,7 @@ Repository: **[The-Allsparks/BEACON](https://github.com/The-Allsparks/BEACON)**
 |------|--------|
 | **Version** | `0.1.0-SNAPSHOT` |
 | **Implemented phase** | **Phase 0** (vocabulary, immutable reports, fake clocks, manual registry, passive logging types) |
-| **Phase 1** | Designed; flag exists (`BeaconFeatureFlags.manualReports()`), not hardware-validated |
+| **Phase 1** | Manual reports + time-correlated sampling (`FreshnessPolicy` overlay); flag default off; not hardware-validated |
 | **Phases 2–10** | Designed / experimental / **disabled by default** |
 | **Active motor, servo, or network intervention** | **Disabled.** Do not enable without review and acceptance tests. |
 | **Driver Station early safe-stop** | **Not implemented.** No reliable supported public freshness API was verified. See [driver-link.md](docs/communications-health/driver-link.md). |

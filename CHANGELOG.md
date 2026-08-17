@@ -15,6 +15,10 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Initial deep audit and priority ledger under `docs/audits/`.
 - CI for compile, unit tests, and relative documentation link checks.
 
+### Changed
+
+- Stored health snapshots now apply `FreshnessPolicy` at sample time. A timestamp of `0` is `UNKNOWN`, not `HEALTHY`. Consecutive success/failure counts accumulate across reports.
+
 ### Safety
 
 - All motor, servo, hardware-recovery, and network-intervention features remain disabled by default.

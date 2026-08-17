@@ -28,6 +28,14 @@ class FreshnessPolicyTest {
     }
 
     @Test
+    void manualReportsDefaultMatchesSimulationWindows() {
+        FreshnessPolicy defaults = FreshnessPolicy.manualReportsDefault();
+        assertEquals(40_000_000L, defaults.delayedThresholdNanos());
+        assertEquals(80_000_000L, defaults.staleThresholdNanos());
+        assertEquals(250_000_000L, defaults.lostThresholdNanos());
+    }
+
+    @Test
     void futureTimestampIsUnknownNotHealthy() {
         assertEquals(Freshness.UNKNOWN, policy.classify(50L, 10L));
     }

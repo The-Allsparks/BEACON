@@ -8,7 +8,7 @@
 | **Packet** | One datagram on a protocol. OpModes do not see Robocol packets. |
 | **Heartbeat** | Periodic “I am alive” message. FTC DS/RC heartbeats are **not** exposed to OpModes. |
 | **Keepalive** | Hub firmware timer; blinking blue LED means it expired. |
-| **Timeout** | Age beyond which data is treated as lost. Per-source. |
+| **Timeout** | Age beyond which data is treated as lost. Per-source. Aged `LOST` snapshots use reason `TIMEOUT`. |
 | **Latency** | Delay of a measured round trip. Leave empty if not measured. |
 | **Jitter** | Variation in packet or loop timing. Ordinary jitter must not trip safe-stop. |
 | **Packet loss** | Missing datagrams. Visible on FRC DS logs; not a public FTC OpMode API. |

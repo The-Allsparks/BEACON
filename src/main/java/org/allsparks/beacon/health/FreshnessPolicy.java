@@ -31,6 +31,14 @@ public final class FreshnessPolicy {
         return new FreshnessPolicy(delayedMs * 1_000_000L, staleMs * 1_000_000L, lostMs * 1_000_000L);
     }
 
+    /**
+     * Default for manual and test reports. Not a Driver Station packet budget.
+     * Matches the desktop jitter simulation windows (40 / 80 / 250 ms).
+     */
+    public static FreshnessPolicy manualReportsDefault() {
+        return ofMillis(40, 80, 250);
+    }
+
     public Freshness classify(long lastValidTimestampNanos, long nowNanos) {
         if (lastValidTimestampNanos <= 0L) {
             return Freshness.UNKNOWN;

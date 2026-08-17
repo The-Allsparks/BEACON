@@ -16,20 +16,51 @@ import org.allsparks.beacon.clock.BeaconClock;
 /**
  * Collects health reports without owning the underlying devices.
  * Manual reports from ViDAR, MIMIC, AMPER, Pedro, or robot code are stored
- * before automatic adapters exist.
+ * before automatic adapters exist. Sampling applies {@link FreshnessPolicy}.
  */
 public final class HealthRegistry {
     private final BeaconClock clock;
+    private final FreshnessPolicy defaultPolicy;
     private final Map<LinkId, HealthSource> sources = new LinkedHashMap<>();
     private final Map<LinkId, HealthReport> lastReports = new LinkedHashMap<>();
+    private final Map<LinkId, FreshnessPolicy> policies = new LinkedHashMap<>();
 
     public HealthRegistry(BeaconClock clock) {
+        this(clock, FreshnessPolicy.manualReportsDefault());
+    }
+
+    public HealthRegistry(BeaconClock clock, FreshnessPolicy defaultPolicy) {
         this.clock = Objects.requireNonNull(clock, "clock");
+        this.defaultPolicy = Objects.requireNonNull(defaultPolicy, "defaultPolicy");
+    }
+
+    public FreshnessPolicy defaultPolicy() {
+        return defaultPolicy;
+    }
+
+    /**
+     * Per-source override. Applies immediately when the id already has a
+     * {@link FakeHealthSource}.
+     */
+    public void setFreshnessPolicy(LinkId id, FreshnessPolicy policy) {
+        Objects.requireNonNull(id, "id");
+        Objects.requireNonNull(policy, "policy");
+        policies.put(id, policy);
+        HealthSource source = sources.get(id);
+        if (source instanceof FakeHealthSource) {
+            ((FakeHealthSource) source).setPolicy(policy);
+        }
     }
 
     public void register(HealthSource source) {
         Objects.requireNonNull(source, "source");
         sources.put(source.id(), source);
+        if (source instanceof FakeHealthSource) {
+            FreshnessPolicy override = policies.get(source.id());
+            if (override != null) {
+                ((FakeHealthSource) source).setPolicy(override);
+            }
+        }
     }
 
     /**
@@ -40,7 +71,8 @@ public final class HealthRegistry {
         Objects.requireNonNull(report, "report");
         HealthSource source = sources.get(report.id());
         if (source == null) {
-            FakeHealthSource created = new FakeHealthSource(report.id(), report.domain());
+            FakeHealthSource created = new FakeHealthSource(
+                    report.id(), report.domain(), policyFor(report.id()));
             sources.put(report.id(), created);
             source = created;
         }
@@ -83,5 +115,10 @@ public final class HealthRegistry {
 
     public int size() {
         return sources.size();
+    }
+
+    private FreshnessPolicy policyFor(LinkId id) {
+        FreshnessPolicy override = policies.get(id);
+        return override != null ? override : defaultPolicy;
     }
 }
