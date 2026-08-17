@@ -6,36 +6,54 @@ labels: ""
 assignees: ""
 ---
 
-## Motivation
+## Problem
+
+## Evidence
+
+## Why this matters
+
+## Student learning objective
 
 ## Scope
 
-## Exclusions
-
-## Dependencies
-
-## Supported observations
-
-## Unsupported assumptions
-
-## Proposed approach
-
-## Educational objective
-
-## Rules considerations
-
-## Safety concerns
+## Out of scope
 
 ## Acceptance criteria
 
 - [ ]
 
-## Required documentation
+## Relevant components
 
-- [ ]
+## Dependencies
 
-## Required tests
+## Blocked by
 
-- [ ]
+## Blocks
 
-## Relevant citations
+## Proposed implementation approach
+
+## Validation plan
+
+## Documentation required
+
+## Hardware validation required
+
+- [ ] None (desktop / documentation only)
+- [ ] Disabled robot
+- [ ] Restrained robot (describe procedure)
+
+## Safety considerations
+
+## Compatibility considerations
+
+## Risks
+
+## Rollback or disable strategy
+
+## Parent epic or roadmap
+
+## Supported observations
+
+## Unsupported assumptions
+
+## Rules considerations

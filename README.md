@@ -113,6 +113,8 @@ BEACON cannot replace:
 | [Conventions](docs/communications-health/conventions.md) | Organization convention assessment |
 | [Rules](docs/communications-health/rules.md) | Competition-manual constraints |
 | [Exercises](docs/communications-health/exercises.md) | Student practice |
+| [Initial deep audit](docs/audits/initial-deep-audit.md) | Orchestrator audit of purpose, architecture, safety, and gaps |
+| [Priority ledger](docs/audits/priority-ledger.md) | Ready-issue selection and PR status |
 
 ---
 

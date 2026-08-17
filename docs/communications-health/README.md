@@ -24,3 +24,5 @@ It is not the same as:
 - a Hub LED remaining lit.
 
 See [research](research.md) and [driver-link.md](driver-link.md).
+
+Repository-wide findings from the Phase 0 scaffold review live in the [initial deep audit](../audits/initial-deep-audit.md) and [priority ledger](../audits/priority-ledger.md).
