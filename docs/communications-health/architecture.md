@@ -29,9 +29,26 @@ Do not invent unavailable latency or signal measurements.
 
 Collects reports without owning devices. Manual reports from ViDAR, MIMIC, AMPER, Pedro, and robot code are first-class. Removing BEACON means deleting `beacon.report(...)` calls; subsystems do not need rewrites.
 
+`snapshot()` and `get()` call `HealthSource.sample(nowNanos)`. For `FakeHealthSource`, that overlays `FreshnessPolicy` onto the last observation. Consecutive success/failure counts change only when a new report is accepted, not when a stored healthy report ages.
+
+Per-source override: `HealthRegistry.setFreshnessPolicy(id, policy)`. Auto-created sources use `FreshnessPolicy.manualReportsDefault()` (`40 / 80 / 250` ms) unless overridden. That default is for **manual and test reports**, not Driver Station packets.
+
 ## FreshnessPolicy
 
 Per-source thresholds for current / delayed / stale / lost. Camera frames, I²C readings, and Driver Station packets do not share timing.
+
+Sampling overlay (Phase 1):
+
+- Reporter `LOST` stays `LOST` (explicit loss wins) until a newer healthy report.
+- Reporter `UNKNOWN` stays `UNKNOWN`.
+- `lastValidTimestampNanos <= 0` on a non-lost report becomes `UNKNOWN` / `NEVER_OBSERVED`. A timestamp of `0` is not healthy.
+- A future timestamp becomes `UNKNOWN` / `INSUFFICIENT_EVIDENCE`.
+- Otherwise the snapshot is the worse of reporter state vs age (`HEALTHY` < `STALE` < `LOST`).
+- Age past the stale threshold (strictly greater than the inclusive bound) → `STALE` / `STALE_DATA`.
+- Age past the lost threshold → `LOST` / `TIMEOUT`.
+- `DELAYED` still maps to `LinkState.HEALTHY`. Phase 0 does not expose a delayed snapshot state.
+
+Do not invent latency when overlaying.
 
 ## PreflightInspector
 

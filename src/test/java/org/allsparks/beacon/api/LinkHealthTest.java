@@ -41,6 +41,24 @@ class LinkHealthTest {
     }
 
     @Test
+    void toBuilderCopiesLatencyAndCounts() {
+        LinkHealth original = LinkHealth.builder(LinkId.of("expansionHub"))
+                .domain(FailureDomain.CONTROL_HUB_TO_EXPANSION_HUB)
+                .state(LinkState.HEALTHY)
+                .reason(LinkFailureReason.NONE)
+                .confidence(Confidence.of(0.9))
+                .observedLatencyMs(4.5)
+                .consecutiveSuccesses(3)
+                .lastValidTimestampNanos(100L)
+                .build();
+        LinkHealth copy = original.toBuilder().state(LinkState.STALE).reason(LinkFailureReason.STALE_DATA).build();
+        assertEquals(OptionalDouble.of(4.5), copy.observedLatencyMs());
+        assertEquals(3, copy.consecutiveSuccesses());
+        assertEquals(100L, copy.lastValidTimestampNanos());
+        assertEquals(LinkState.STALE, copy.state());
+    }
+
+    @Test
     void confidenceUnknownIsNotZero() {
         Confidence unknown = Confidence.unknown();
         assertFalse(unknown.isKnown());

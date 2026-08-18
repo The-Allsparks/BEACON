@@ -27,22 +27,33 @@ class BeaconSessionTest {
 
     @Test
     void phase0StoresReportsWithoutLogging() {
-        FakeClock clock = new FakeClock();
+        FakeClock clock = new FakeClock(1L);
         BeaconSession session = new BeaconSession(BeaconFeatureFlags.defaults(), clock, 16);
         session.report(HealthReport.healthy(
-                LinkId.of("batteryTelemetry"), FailureDomain.ELECTRICAL, 0L, "AMPER"));
+                LinkId.of("batteryTelemetry"), FailureDomain.ELECTRICAL, 1L, "AMPER"));
         assertEquals(1, session.snapshot().size());
         assertEquals(0, session.logger().size());
         assertEquals(LinkState.HEALTHY, session.snapshot().get(0).state());
     }
 
     @Test
+    void timestampZeroIsUnknownNotHealthy() {
+        FakeClock clock = new FakeClock(1L);
+        BeaconSession session = new BeaconSession(BeaconFeatureFlags.defaults(), clock, 16);
+        session.report(HealthReport.healthy(
+                LinkId.of("batteryTelemetry"), FailureDomain.ELECTRICAL, 0L, "AMPER"));
+        assertEquals(LinkState.UNKNOWN, session.snapshot().get(0).state());
+        assertEquals(0, session.logger().size());
+    }
+
+    @Test
     void phase1LogsManualReports() {
-        FakeClock clock = new FakeClock();
+        FakeClock clock = new FakeClock(1L);
         BeaconSession session = new BeaconSession(BeaconFeatureFlags.manualReports(), clock, 16);
         session.report(HealthReport.healthy(
-                LinkId.of("localization"), FailureDomain.SOFTWARE_LOOP, 0L, "Pedro"));
+                LinkId.of("localization"), FailureDomain.SOFTWARE_LOOP, 1L, "Pedro"));
         assertEquals(1, session.logger().size());
+        assertEquals(LinkState.HEALTHY, session.snapshot().get(0).state());
     }
 
     @Test

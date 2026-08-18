@@ -37,6 +37,7 @@ class HealthRegistryTest {
                 org.allsparks.beacon.api.LinkFailureReason.EXPLICIT_LOSS_REPORT,
                 org.allsparks.beacon.api.Confidence.of(0.8)));
         assertEquals(LinkState.LOST, source.sample(10L).state());
+        assertEquals(org.allsparks.beacon.api.LinkFailureReason.EXPLICIT_LOSS_REPORT, source.sample(10L).reason());
         assertEquals(1, source.sample(10L).consecutiveFailures());
     }
 }

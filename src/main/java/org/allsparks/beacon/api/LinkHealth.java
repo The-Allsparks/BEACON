@@ -89,6 +89,20 @@ public final class LinkHealth {
         return confidence;
     }
 
+    /** Copy of this snapshot for overlay updates that must not invent latency. */
+    public Builder toBuilder() {
+        return builder(id)
+                .state(state)
+                .domain(domain)
+                .lastValidTimestampNanos(lastValidTimestampNanos)
+                .lastFailureTimestampNanos(lastFailureTimestampNanos)
+                .consecutiveSuccesses(consecutiveSuccesses)
+                .consecutiveFailures(consecutiveFailures)
+                .observedLatencyMs(observedLatencyMs)
+                .reason(reason)
+                .confidence(confidence);
+    }
+
     public static final class Builder {
         private final LinkId id;
         private LinkState state = LinkState.UNKNOWN;

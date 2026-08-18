@@ -20,6 +20,9 @@ public final class PassiveHealthMonitorExample {
                 LinkId.of("frontCamera"), FailureDomain.USB_CAMERA, clock.nanoTime(), "ViDAR"));
         System.out.println("sources=" + beacon.snapshot().size());
         System.out.println("events=" + beacon.logger().size());
+        System.out.println("state=" + beacon.snapshot().get(0).state());
+        clock.advanceMillis(251);
+        System.out.println("aged=" + beacon.snapshot().get(0).state());
         System.out.println("intervention=" + beacon.isInterventionEnabled());
     }
 }
