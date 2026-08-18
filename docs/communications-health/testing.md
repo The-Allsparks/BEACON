@@ -2,7 +2,7 @@
 
 ## Unit tests (Phase 0, implemented)
 
-Covered now: health-state construction, freshness thresholds, hysteresis windows, confidence absence, rolling event history, command-lease expiration, recovery inhibit, neutral-control detection, bounded retry math, missing data, fake clocks, registry clock-advance aging (`STALE` / `LOST` without a new report), consecutive report counts, timestamp `0` → `UNKNOWN`, preflight required vs optional (optional absence `READY_DEGRADED`, required missing evidence `UNKNOWN`, required `LOST`/`STALE` `NOT_READY`).
+Covered now: health-state construction, freshness thresholds, hysteresis windows, confidence absence, rolling event history, command-lease expiration, recovery inhibit, neutral-control detection, bounded retry math, missing data, fake clocks, registry clock-advance aging (`STALE` / `LOST` without a new report), consecutive report counts, timestamp `0` → `UNKNOWN`, preflight required vs optional (optional absence `READY_DEGRADED`, required missing evidence `UNKNOWN`, required `LOST`/`STALE` `NOT_READY`), Phase 3 auto `HEALTH_TRANSITION` / `LOOP_TIMING` (flag off is silent; first observation `NONE->…`; unchanged state is not re-logged; aging appears on `observe()` not `snapshot()`; `droppedCount` when full).
 
 ## Simulation tests (Phase 0, partial)
 
@@ -34,4 +34,4 @@ Maximum initial drive power for any future Phase 5 test: low enough that a misse
 
 ## Overhead
 
-Call `BeaconSession.lastObserveDurationNanos()` in Phase 1. Acceptance requires measuring loop overhead on a Control Hub before enabling logging-heavy phases.
+Call `BeaconSession.lastObserveDurationNanos()` after `observe()` or `report()`. Software bounds logging at logger capacity (default 256). Acceptance still requires measuring loop overhead on a Control Hub ([issue #10](https://github.com/The-Allsparks/BEACON/issues/10)); this library does not claim that measurement.

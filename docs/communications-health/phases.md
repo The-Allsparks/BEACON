@@ -40,6 +40,8 @@ Rolling timeline of health, loop duration, AMPER voltage, mechanism activity, ca
 
 **Acceptance:** post-match timelines distinguish major domains; logging is bounded.
 
+**Status:** bounded logger records `HEALTH_TRANSITION` and `LOOP_TIMING` when the Phase 3 flag is on; default session capacity is 256; flag default off; Control Hub overhead not measured.
+
 ## Phase 4 — Advisory correlation and shadow safe state
 
 **Teach:** What evidence supports a diagnosis?

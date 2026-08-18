@@ -1,11 +1,14 @@
 package org.allsparks.beacon;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.allsparks.beacon.api.FailureDomain;
 import org.allsparks.beacon.api.HealthReport;
 import org.allsparks.beacon.api.LinkHealth;
 import org.allsparks.beacon.api.LinkId;
+import org.allsparks.beacon.api.LinkState;
 import org.allsparks.beacon.clock.BeaconClock;
 import org.allsparks.beacon.clock.SystemNanoClock;
 import org.allsparks.beacon.health.HealthRegistry;
@@ -23,10 +26,14 @@ import org.allsparks.beacon.preflight.PreflightStatus;
  * or network hardware.
  */
 public final class BeaconSession {
+    /** Default in-memory history bound used by {@link #create()} factories. */
+    public static final int DEFAULT_LOGGER_CAPACITY = 256;
+
     private final BeaconFeatureFlags flags;
     private final BeaconClock clock;
     private final HealthRegistry registry;
     private final BeaconEventLogger logger;
+    private final Map<LinkId, LinkState> lastLoggedStates = new HashMap<>();
     private long observeCount;
     private long lastObserveDurationNanos;
 
@@ -37,12 +44,17 @@ public final class BeaconSession {
         this.logger = new BeaconEventLogger(loggerCapacity);
     }
 
+    /**
+     * Create a session with default flags and a 256-event in-memory logger.
+     * That capacity is the software bound for Phase 3 history; it is not a
+     * Control Hub overhead measurement.
+     */
     public static BeaconSession create() {
-        return new BeaconSession(BeaconFeatureFlags.defaults(), new SystemNanoClock(), 256);
+        return new BeaconSession(BeaconFeatureFlags.defaults(), new SystemNanoClock(), DEFAULT_LOGGER_CAPACITY);
     }
 
     public static BeaconSession create(BeaconFeatureFlags flags) {
-        return new BeaconSession(flags, new SystemNanoClock(), 256);
+        return new BeaconSession(flags, new SystemNanoClock(), DEFAULT_LOGGER_CAPACITY);
     }
 
     /**
@@ -61,6 +73,9 @@ public final class BeaconSession {
                     report.id(),
                     report.domain(),
                     report.reporter() + ": " + report.reportedState()));
+        }
+        if (flags.isPhase3EventHistory()) {
+            recordHealthTransition(health, start);
         }
         lastObserveDurationNanos = clock.nanoTime() - start;
         observeCount++;
@@ -136,5 +151,45 @@ public final class BeaconSession {
                 FailureDomain.SOFTWARE_LOOP,
                 report.status().name()));
         return report;
+    }
+
+    /**
+     * Sample all registered links. When Phase 3 is enabled, records health
+     * transitions discovered by freshness aging and one loop-timing event.
+     * Does not command actuators. Logging is bounded by logger capacity.
+     */
+    public List<LinkHealth> observe() {
+        long start = clock.nanoTime();
+        List<LinkHealth> snap = registry.snapshot();
+        if (flags.isPhase3EventHistory()) {
+            for (LinkHealth health : snap) {
+                recordHealthTransition(health, start);
+            }
+        }
+        lastObserveDurationNanos = clock.nanoTime() - start;
+        observeCount++;
+        if (flags.isPhase3EventHistory()) {
+            logger.record(new BeaconEvent(
+                    start,
+                    BeaconEventType.LOOP_TIMING,
+                    LinkId.of("loop"),
+                    FailureDomain.SOFTWARE_LOOP,
+                    Long.toString(lastObserveDurationNanos)));
+        }
+        return snap;
+    }
+
+    private void recordHealthTransition(LinkHealth health, long timestampNanos) {
+        LinkState previous = lastLoggedStates.put(health.id(), health.state());
+        if (previous == health.state()) {
+            return;
+        }
+        String from = previous == null ? "NONE" : previous.name();
+        logger.record(new BeaconEvent(
+                timestampNanos,
+                BeaconEventType.HEALTH_TRANSITION,
+                health.id(),
+                health.domain(),
+                from + "->" + health.state().name()));
     }
 }
