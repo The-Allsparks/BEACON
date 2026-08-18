@@ -172,4 +172,9 @@ public final class BeaconFeatureFlags {
     public static BeaconFeatureFlags manualReports() {
         return builder().phase1ManualReports(true).build();
     }
+
+    /** Phase 0–2: manual reports and preflight. No output intervention. */
+    public static BeaconFeatureFlags preflight() {
+        return builder().phase1ManualReports(true).phase2Preflight(true).build();
+    }
 }

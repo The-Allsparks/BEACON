@@ -4,12 +4,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
 import org.allsparks.beacon.adapters.future.SystemCoreAdapterBoundary;
 import org.allsparks.beacon.api.FailureDomain;
 import org.allsparks.beacon.api.HealthReport;
 import org.allsparks.beacon.api.LinkId;
 import org.allsparks.beacon.api.LinkState;
 import org.allsparks.beacon.clock.FakeClock;
+import org.allsparks.beacon.preflight.PreflightExpectation;
 import org.allsparks.beacon.preflight.PreflightFinding;
 import org.allsparks.beacon.preflight.PreflightStatus;
 import org.allsparks.beacon.recovery.RecoveryPolicy;
@@ -73,5 +76,34 @@ class BeaconSessionTest {
                 PreflightStatus.READY_DEGRADED,
                 "Optional Expansion Hub is absent");
         assertEquals(PreflightStatus.READY_DEGRADED, finding.status());
+    }
+
+    @Test
+    void preflightDisabledFailsUnknown() {
+        FakeClock clock = new FakeClock(1L);
+        BeaconSession session = new BeaconSession(BeaconFeatureFlags.defaults(), clock, 16);
+        assertEquals(
+                PreflightStatus.UNKNOWN,
+                session.preflight(Collections.singletonList(PreflightExpectation.required(LinkId.of("frontCamera"))))
+                        .status());
+        assertEquals(0, session.logger().size());
+        assertFalse(session.isInterventionEnabled());
+    }
+
+    @Test
+    void preflightEnabledLogsAndDoesNotCommand() {
+        FakeClock clock = new FakeClock(1L);
+        BeaconSession session = new BeaconSession(BeaconFeatureFlags.preflight(), clock, 16);
+        session.report(HealthReport.healthy(
+                LinkId.of("frontCamera"), FailureDomain.USB_CAMERA, 1L, "ViDAR"));
+        assertEquals(
+                PreflightStatus.READY_DEGRADED,
+                session.preflight(Arrays.asList(
+                                PreflightExpectation.required(LinkId.of("frontCamera")),
+                                PreflightExpectation.optional(LinkId.of("expansionHub"))))
+                        .status());
+        assertTrue(session.logger().size() >= 1);
+        assertFalse(session.isInterventionEnabled());
+        assertFalse(session.flags().isPhase5DrivetrainSafeStop());
     }
 }

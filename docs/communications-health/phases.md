@@ -30,6 +30,8 @@ Report required/optional Hubs, cameras, sensors, gamepads where observable, AMPE
 
 **Acceptance:** every failure explains why; optional failures yield `READY_DEGRADED`; checklist does not command actuators; false positives tested.
 
+**Status:** inspector implemented against the health registry; flag default off; no hardware probing.
+
 ## Phase 3 — Passive event history
 
 **Teach:** What happened immediately before the failure?

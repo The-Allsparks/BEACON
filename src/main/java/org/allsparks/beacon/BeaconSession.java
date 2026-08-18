@@ -12,6 +12,11 @@ import org.allsparks.beacon.health.HealthRegistry;
 import org.allsparks.beacon.log.BeaconEvent;
 import org.allsparks.beacon.log.BeaconEventLogger;
 import org.allsparks.beacon.log.BeaconEventType;
+import org.allsparks.beacon.preflight.PreflightExpectation;
+import org.allsparks.beacon.preflight.PreflightFinding;
+import org.allsparks.beacon.preflight.PreflightInspector;
+import org.allsparks.beacon.preflight.PreflightReport;
+import org.allsparks.beacon.preflight.PreflightStatus;
 
 /**
  * Per-OpMode BEACON session. Observes and logs; never commands motors, servos,
@@ -106,5 +111,30 @@ public final class BeaconSession {
             return registry.get(id).get().domain();
         }
         return FailureDomain.UNKNOWN;
+    }
+
+    /**
+     * Evaluate declared expected links. Does not command actuators. When Phase 2
+     * is disabled, the result is {@link PreflightStatus#UNKNOWN} rather than a
+     * fabricated ready or not-ready call.
+     */
+    public PreflightReport preflight(List<PreflightExpectation> expected) {
+        Objects.requireNonNull(expected, "expected");
+        if (!flags.isPhase2Preflight()) {
+            PreflightFinding finding = new PreflightFinding(
+                    LinkId.of("preflight"),
+                    true,
+                    PreflightStatus.UNKNOWN,
+                    "Phase 2 preflight is disabled by feature flags.");
+            return PreflightReport.of(PreflightStatus.UNKNOWN, java.util.Collections.singletonList(finding));
+        }
+        PreflightReport report = PreflightInspector.evaluate(registry, expected);
+        logger.record(new BeaconEvent(
+                clock.nanoTime(),
+                BeaconEventType.PREFLIGHT,
+                LinkId.of("preflight"),
+                FailureDomain.SOFTWARE_LOOP,
+                report.status().name()));
+        return report;
     }
 }
