@@ -177,4 +177,12 @@ public final class BeaconFeatureFlags {
     public static BeaconFeatureFlags preflight() {
         return builder().phase1ManualReports(true).phase2Preflight(true).build();
     }
+
+    /**
+     * Phase 0–3: manual reports plus bounded health-transition and loop-timing
+     * history. No output intervention.
+     */
+    public static BeaconFeatureFlags eventHistory() {
+        return builder().phase1ManualReports(true).phase3EventHistory(true).build();
+    }
 }

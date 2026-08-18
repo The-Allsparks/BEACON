@@ -58,6 +58,18 @@ PreflightReport preflight = beacon.preflight(Arrays.asList(
 
 The inspector does not command actuators and does not invent a Driver Station heartbeat. A required link with no report is `UNKNOWN`.
 
+## Phase 3 — bounded event history
+
+```java
+BeaconSession beacon = BeaconSession.create(BeaconFeatureFlags.eventHistory());
+beacon.report(HealthReport.healthy(
+        LinkId.of("frontCamera"), FailureDomain.USB_CAMERA, clock.nanoTime(), "ViDAR"));
+beacon.observe(); // once per loop: ages snapshots and records LOOP_TIMING
+String csv = beacon.logger().exportCsv();
+```
+
+This is an in-memory timeline, not a diagnosis. Oldest events drop when the logger is full (`droppedCount()`). Do not add a second runtime log stream.
+
 ## Later phases
 
 Do not enable from examples until acceptance tests in [phases.md](../docs/communications-health/phases.md) pass and maintainers review. Driver Station safe-stop remains research-only until a supported freshness source is proven.

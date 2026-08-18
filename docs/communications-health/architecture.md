@@ -58,6 +58,8 @@ Phase 2. `PreflightInspector.evaluate(registry, expectations)` classifies declar
 
 Phase 3–4. Initially a timeline (`BeaconEventLogger`), not a root-cause engine.
 
+Phase 3 (flag default off): `BeaconSession.report` and `BeaconSession.observe` record `HEALTH_TRANSITION` when `LinkState` changes. `observe` also records one `LOOP_TIMING` event. `snapshot()` does not log. First observation uses detail `NONE-><state>`. No AMPER/MIMIC/ViDAR/Pedro automatic adapters yet — those remain manual reports.
+
 ## SafeStateCoordinator
 
 Requests safe-state transitions from registered subsystems. It does not directly command every motor. `SafeStateRequest.shadowOnly` is the Phase 4 default.
@@ -68,7 +70,7 @@ Specifies whether recovery is allowed, attempt limit, backoff, timeout, and CPU 
 
 ## BeaconEventLogger
 
-Bounded rolling buffer. CSV header is TRACE-compatible:
+Bounded rolling buffer. Default `BeaconSession` capacity is 256. When full, the oldest event is dropped and `droppedCount` increases. CSV header is TRACE-compatible:
 
 `timestampNanos,type,linkId,domain,detail`
 
