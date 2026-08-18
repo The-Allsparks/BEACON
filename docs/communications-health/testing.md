@@ -2,7 +2,7 @@
 
 ## Unit tests (Phase 0, implemented)
 
-Covered now: health-state construction, freshness thresholds, hysteresis windows, confidence absence, rolling event history, command-lease expiration, recovery inhibit, neutral-control detection, bounded retry math, missing data, fake clocks, registry clock-advance aging (`STALE` / `LOST` without a new report), consecutive report counts, timestamp `0` → `UNKNOWN`, preflight required vs optional (optional absence `READY_DEGRADED`, required missing evidence `UNKNOWN`, required `LOST`/`STALE` `NOT_READY`), Phase 3 auto `HEALTH_TRANSITION` / `LOOP_TIMING` (flag off is silent; first observation `NONE->…`; unchanged state is not re-logged; aging appears on `observe()` not `snapshot()`; `droppedCount` when full).
+Covered now: health-state construction, freshness thresholds, hysteresis windows, confidence absence, rolling event history, command-lease expiration, recovery inhibit, neutral-control detection, bounded retry math, missing data, fake clocks, registry clock-advance aging (`STALE` / `LOST` without a new report), consecutive report counts, timestamp `0` → `UNKNOWN`, preflight required vs optional (optional absence `READY_DEGRADED`, required missing evidence `UNKNOWN`, required `LOST`/`STALE` `NOT_READY`), Phase 3 auto `HEALTH_TRANSITION` / `LOOP_TIMING` (flag off is silent; first observation `NONE->…`; unchanged state is not re-logged; aging appears on `observe()` not `snapshot()`; `droppedCount` when full), Phase 4 advisory labels (isolated camera/hub/power/loop-overrun; simultaneous multi-family without AMPER → `INSUFFICIENT_EVIDENCE`; AMPER plus companions → low-confidence power, not jamming; flag off is insufficient; no DS heartbeat diagnosis).
 
 ## Simulation tests (Phase 0, partial)
 

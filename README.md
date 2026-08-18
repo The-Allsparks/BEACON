@@ -39,11 +39,12 @@ Repository: **[The-Allsparks/BEACON](https://github.com/The-Allsparks/BEACON)**
 | Item | Status |
 |------|--------|
 | **Version** | `0.1.0-SNAPSHOT` |
-| **Implemented phase** | **Phase 0–3 types** (vocabulary, aging registry, preflight inspector, bounded event history). Flags for Phase 1+ default off. |
+| **Implemented phase** | **Phase 0–4 types** (vocabulary, aging registry, preflight, bounded history, advisory correlator). Flags for Phase 1+ default off. |
 | **Phase 1** | Manual reports + time-correlated sampling (`FreshnessPolicy` overlay); flag default off; not hardware-validated |
 | **Phase 2** | `PreflightInspector` against registry snapshots; flag default off; no hardware probing |
 | **Phase 3** | Automatic `HEALTH_TRANSITION` / `LOOP_TIMING` into the bounded logger; flag default off; Control Hub overhead not measured |
-| **Phases 4–10** | Designed / experimental / **disabled by default** |
+| **Phase 4** | Advisory labels from snapshot + events; flag default off; no match false-fault review; shadow safe-stop not implemented |
+| **Phases 5–10** | Designed / experimental / **disabled by default** |
 | **Active motor, servo, or network intervention** | **Disabled.** Do not enable without review and acceptance tests. |
 | **Driver Station early safe-stop** | **Not implemented.** No reliable supported public freshness API was verified. See [driver-link.md](docs/communications-health/driver-link.md). |
 | **Production safety claims** | **None.** This scaffold has not been validated on a real FTC robot. |

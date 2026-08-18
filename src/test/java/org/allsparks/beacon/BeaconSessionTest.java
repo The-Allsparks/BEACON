@@ -7,11 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import org.allsparks.beacon.adapters.future.SystemCoreAdapterBoundary;
+import org.allsparks.beacon.api.Confidence;
 import org.allsparks.beacon.api.FailureDomain;
 import org.allsparks.beacon.api.HealthReport;
+import org.allsparks.beacon.api.LinkFailureReason;
 import org.allsparks.beacon.api.LinkId;
 import org.allsparks.beacon.api.LinkState;
 import org.allsparks.beacon.clock.FakeClock;
+import org.allsparks.beacon.correlate.AdvisoryLabel;
+import org.allsparks.beacon.correlate.AdvisoryReport;
 import org.allsparks.beacon.preflight.PreflightExpectation;
 import org.allsparks.beacon.preflight.PreflightFinding;
 import org.allsparks.beacon.preflight.PreflightStatus;
@@ -102,6 +106,48 @@ class BeaconSessionTest {
                                 PreflightExpectation.required(LinkId.of("frontCamera")),
                                 PreflightExpectation.optional(LinkId.of("expansionHub"))))
                         .status());
+        assertTrue(session.logger().size() >= 1);
+        assertFalse(session.isInterventionEnabled());
+        assertFalse(session.flags().isPhase5DrivetrainSafeStop());
+    }
+
+    @Test
+    void advisoryDisabledFailsInsufficient() {
+        FakeClock clock = new FakeClock(1L);
+        BeaconSession session = new BeaconSession(BeaconFeatureFlags.defaults(), clock, 16);
+        session.report(new HealthReport(
+                LinkId.of("frontCamera"),
+                FailureDomain.USB_CAMERA,
+                LinkState.LOST,
+                1L,
+                "ViDAR",
+                "pipeline stopped",
+                LinkFailureReason.EXPLICIT_LOSS_REPORT,
+                Confidence.of(0.8)));
+        AdvisoryReport report = session.advise();
+        assertEquals(AdvisoryLabel.INSUFFICIENT_EVIDENCE, report.label());
+        assertFalse(report.confidence().isKnown());
+        assertEquals(0, session.logger().size());
+        assertFalse(session.isInterventionEnabled());
+    }
+
+    @Test
+    void advisoryEnabledLabelsIsolatedCameraAndDoesNotCommand() {
+        FakeClock clock = new FakeClock(1L);
+        BeaconSession session = new BeaconSession(BeaconFeatureFlags.advisory(), clock, 16);
+        session.report(new HealthReport(
+                LinkId.of("frontCamera"),
+                FailureDomain.USB_CAMERA,
+                LinkState.LOST,
+                1L,
+                "ViDAR",
+                "pipeline stopped",
+                LinkFailureReason.EXPLICIT_LOSS_REPORT,
+                Confidence.of(0.8)));
+        AdvisoryReport report = session.advise();
+        assertEquals(AdvisoryLabel.PROBABLE_ISOLATED_CAMERA_FAILURE, report.label());
+        assertTrue(report.confidence().isKnown());
+        assertFalse(report.evidence().isEmpty());
         assertTrue(session.logger().size() >= 1);
         assertFalse(session.isInterventionEnabled());
         assertFalse(session.flags().isPhase5DrivetrainSafeStop());

@@ -70,6 +70,26 @@ String csv = beacon.logger().exportCsv();
 
 This is an in-memory timeline, not a diagnosis. Oldest events drop when the logger is full (`droppedCount()`). Do not add a second runtime log stream.
 
+## Phase 4 — advisory correlation
+
+```java
+BeaconSession beacon = BeaconSession.create(BeaconFeatureFlags.advisory());
+beacon.report(new HealthReport(
+        LinkId.of("frontCamera"),
+        FailureDomain.USB_CAMERA,
+        LinkState.LOST,
+        clock.nanoTime(),
+        "ViDAR",
+        "pipeline stopped",
+        LinkFailureReason.EXPLICIT_LOSS_REPORT,
+        Confidence.of(0.8)));
+AdvisoryReport advice = beacon.advise();
+// Isolated camera → PROBABLE_ISOLATED_CAMERA_FAILURE.
+// Camera + Hub without AMPER → INSUFFICIENT_EVIDENCE, not "jamming."
+```
+
+This does not command actuators and does not log a shadow Driver Station safe-stop.
+
 ## Later phases
 
 Do not enable from examples until acceptance tests in [phases.md](../docs/communications-health/phases.md) pass and maintainers review. Driver Station safe-stop remains research-only until a supported freshness source is proven.

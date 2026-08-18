@@ -60,6 +60,8 @@ Phase 3–4. Initially a timeline (`BeaconEventLogger`), not a root-cause engine
 
 Phase 3 (flag default off): `BeaconSession.report` and `BeaconSession.observe` record `HEALTH_TRANSITION` when `LinkState` changes. `observe` also records one `LOOP_TIMING` event. `snapshot()` does not log. First observation uses detail `NONE-><state>`. No AMPER/MIMIC/ViDAR/Pedro automatic adapters yet — those remain manual reports.
 
+Phase 4 advisory (flag default off): `EventCorrelator.evaluate(events, snapshot)` emits one `AdvisoryLabel` with `Confidence` and evidence. Isolated single-family failures may receive a probable label; simultaneous multi-family failures without electrical/AMPER evidence are `INSUFFICIENT_EVIDENCE`. Driver Station domains are not diagnosed here. `BeaconSession.advise()` does not command actuators and does not log `SHADOW_SAFE_STATE`.
+
 ## SafeStateCoordinator
 
 Requests safe-state transitions from registered subsystems. It does not directly command every motor. `SafeStateRequest.shadowOnly` is the Phase 4 default.
