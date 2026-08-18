@@ -26,6 +26,8 @@ cd BEACON
 - Update docs when behavior or maturity labels change.
 - Run `.\gradlew.bat test` (or `./gradlew test`) before requesting review.
 
+GitHub Actions in `.github/workflows/` are pinned to full commit SHAs with a version comment (for example `# v4.4.0`). Dependabot can still propose updates to those pins.
+
 ## Line endings
 
 The repository stores LF line endings (see [.gitattributes](.gitattributes)).
