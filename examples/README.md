@@ -44,6 +44,20 @@ Use a positive source timestamp. `0` means never observed and snapshots as `UNKN
 
 BEACON only stores, ages, and logs. It does not probe or restart devices.
 
+## Phase 2 — preflight
+
+```java
+BeaconSession beacon = BeaconSession.create(BeaconFeatureFlags.preflight());
+beacon.report(HealthReport.healthy(
+        LinkId.of("frontCamera"), FailureDomain.USB_CAMERA, clock.nanoTime(), "ViDAR"));
+PreflightReport preflight = beacon.preflight(Arrays.asList(
+        PreflightExpectation.required(LinkId.of("frontCamera")),
+        PreflightExpectation.optional(LinkId.of("expansionHub"))));
+// Optional Expansion Hub with no report → READY_DEGRADED, not NOT_READY.
+```
+
+The inspector does not command actuators and does not invent a Driver Station heartbeat. A required link with no report is `UNKNOWN`.
+
 ## Later phases
 
 Do not enable from examples until acceptance tests in [phases.md](../docs/communications-health/phases.md) pass and maintainers review. Driver Station safe-stop remains research-only until a supported freshness source is proven.

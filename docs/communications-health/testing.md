@@ -2,7 +2,7 @@
 
 ## Unit tests (Phase 0, implemented)
 
-Covered now: health-state construction, freshness thresholds, hysteresis windows, confidence absence, rolling event history, command-lease expiration, recovery inhibit, neutral-control detection, bounded retry math, missing data, fake clocks, registry clock-advance aging (`STALE` / `LOST` without a new report), consecutive report counts, timestamp `0` → `UNKNOWN`.
+Covered now: health-state construction, freshness thresholds, hysteresis windows, confidence absence, rolling event history, command-lease expiration, recovery inhibit, neutral-control detection, bounded retry math, missing data, fake clocks, registry clock-advance aging (`STALE` / `LOST` without a new report), consecutive report counts, timestamp `0` → `UNKNOWN`, preflight required vs optional (optional absence `READY_DEGRADED`, required missing evidence `UNKNOWN`, required `LOST`/`STALE` `NOT_READY`).
 
 ## Simulation tests (Phase 0, partial)
 

@@ -14,6 +14,7 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - Source-backed communications-health research, Driver Station freshness feasibility study, architecture, phased roadmap, and student documentation.
 - Initial deep audit and priority ledger under `docs/audits/`.
 - CI for compile, unit tests, and relative documentation link checks.
+- Phase 2 `PreflightInspector`: required vs optional expectations against registry snapshots.
 
 ### Changed
 

@@ -52,7 +52,7 @@ Do not invent latency when overlaying.
 
 ## PreflightInspector
 
-Designed for Phase 2. Types exist (`PreflightStatus`, `PreflightFinding`). Every finding must explain why. Results: `READY`, `READY_DEGRADED`, `NOT_READY`, `UNKNOWN`. The inspector must not command actuators.
+Phase 2. `PreflightInspector.evaluate(registry, expectations)` classifies declared required/optional links from existing `LinkHealth` snapshots. Every finding explains why. Results: `READY`, `READY_DEGRADED`, `NOT_READY`, `UNKNOWN`. The inspector must not command actuators, probe devices, or invent a Driver Station heartbeat. `BeaconSession.preflight` is off unless the Phase 2 flag is enabled.
 
 ## EventCorrelator
 
