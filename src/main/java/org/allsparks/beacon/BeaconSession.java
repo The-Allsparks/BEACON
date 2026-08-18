@@ -1,9 +1,11 @@
 package org.allsparks.beacon;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.allsparks.beacon.api.Confidence;
 import org.allsparks.beacon.api.FailureDomain;
 import org.allsparks.beacon.api.HealthReport;
 import org.allsparks.beacon.api.LinkHealth;
@@ -11,6 +13,10 @@ import org.allsparks.beacon.api.LinkId;
 import org.allsparks.beacon.api.LinkState;
 import org.allsparks.beacon.clock.BeaconClock;
 import org.allsparks.beacon.clock.SystemNanoClock;
+import org.allsparks.beacon.correlate.AdvisoryEvidence;
+import org.allsparks.beacon.correlate.AdvisoryLabel;
+import org.allsparks.beacon.correlate.AdvisoryReport;
+import org.allsparks.beacon.correlate.EventCorrelator;
 import org.allsparks.beacon.health.HealthRegistry;
 import org.allsparks.beacon.log.BeaconEvent;
 import org.allsparks.beacon.log.BeaconEventLogger;
@@ -150,6 +156,34 @@ public final class BeaconSession {
                 LinkId.of("preflight"),
                 FailureDomain.SOFTWARE_LOOP,
                 report.status().name()));
+        return report;
+    }
+
+    /**
+     * Classify current snapshot and event history into one advisory label.
+     * Does not command actuators and does not log a shadow safe-stop (Phase 4
+     * shadow remains issue #18). When Phase 4 is disabled, the result is
+     * {@link AdvisoryLabel#INSUFFICIENT_EVIDENCE} rather than a fabricated cause.
+     */
+    public AdvisoryReport advise() {
+        if (!flags.isPhase4AdvisoryShadow()) {
+            AdvisoryEvidence evidence = new AdvisoryEvidence(
+                    LinkId.of("correlator"),
+                    FailureDomain.UNKNOWN,
+                    "Phase 4 advisory correlation is disabled by feature flags.");
+            return AdvisoryReport.of(
+                    AdvisoryLabel.INSUFFICIENT_EVIDENCE,
+                    Confidence.unknown(),
+                    Collections.singletonList(evidence),
+                    "Phase 4 advisory correlation is disabled by feature flags.");
+        }
+        AdvisoryReport report = EventCorrelator.evaluate(logger.snapshot(), registry.snapshot());
+        logger.record(new BeaconEvent(
+                clock.nanoTime(),
+                BeaconEventType.FAILURE_DOMAIN_HINT,
+                LinkId.of("correlator"),
+                FailureDomain.UNKNOWN,
+                report.label().name()));
         return report;
     }
 

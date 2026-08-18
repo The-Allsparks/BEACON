@@ -30,11 +30,27 @@ Join timestamps for:
 
 ## Advisory labels (Phase 4)
 
+`EventCorrelator.evaluate(events, snapshot)` returns **one** label with a confidence and an evidence list. `BeaconSession.advise()` is off unless `BeaconFeatureFlags.advisory()` (or `phase4AdvisoryShadow(true)`) is set. Disabled calls return `INSUFFICIENT_EVIDENCE` with unknown confidence.
+
+Labels:
+
 - probable power-related disruption
 - probable isolated camera failure
 - probable Expansion Hub path failure
 - probable loop overrun
 - insufficient evidence
+
+Rules used in software (desktop fixtures, not match-validated):
+
+- `STALE` / `LOST` links count as failed. `UNKNOWN` and `HEALTHY` do not.
+- A **single** domain family (camera / hub-path / electrical / loop-overrun) may receive that family’s probable label at confidence `0.5`.
+- Software-loop loss **without** reason `LOOP_OVERRUN` is `INSUFFICIENT_EVIDENCE`.
+- Driver Station / gamepad domains are `INSUFFICIENT_EVIDENCE` (this is not a heartbeat detector).
+- Two or more families without electrical or AMPER voltage evidence → `INSUFFICIENT_EVIDENCE`.
+- Electrical or `AMPER_VOLTAGE` evidence **plus** other failed families → `PROBABLE_POWER_DISRUPTION` at confidence `0.4`, with all evidence listed. That is not a unique cause and is **not** jamming.
+- There is no jamming or malicious-interference label.
+
+Sibling ViDAR/MIMIC/AMPER/Pedro adapters are not required: tests and OpModes may submit `HealthReport` / `BeaconEvent` fixtures. Post-match false-fault review remains issue #17. Shadow safe-stop logging remains issue #18.
 
 Every label needs a confidence and the evidence list. Simultaneous failures are often **misleading** (brownout plus Hub loss plus camera USB reset). Prefer `INSUFFICIENT_EVIDENCE` over a dramatic story.
 

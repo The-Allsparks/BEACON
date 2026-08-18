@@ -185,4 +185,17 @@ public final class BeaconFeatureFlags {
     public static BeaconFeatureFlags eventHistory() {
         return builder().phase1ManualReports(true).phase3EventHistory(true).build();
     }
+
+    /**
+     * Phase 0–4 advisory: manual reports, event history, and correlator.
+     * Does not enable actuator intervention. Shadow safe-stop logging is not
+     * implemented by this helper (issue #18).
+     */
+    public static BeaconFeatureFlags advisory() {
+        return builder()
+                .phase1ManualReports(true)
+                .phase3EventHistory(true)
+                .phase4AdvisoryShadow(true)
+                .build();
+    }
 }

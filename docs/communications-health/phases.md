@@ -56,6 +56,8 @@ Output intervention: DISABLED
 
 **Acceptance:** classifications include confidence; shadow through full matches; no outputs change.
 
+**Status:** advisory correlator implemented against snapshot + event fixtures; flag default off; no sibling adapters; no match false-fault review; shadow safe-stop logging not implemented.
+
 ## Phase 5 — Drivetrain communication safe stop
 
 **Teach:** Why should a command expire?

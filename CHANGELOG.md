@@ -16,6 +16,7 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 - CI for compile, unit tests, and relative documentation link checks.
 - Phase 2 `PreflightInspector`: required vs optional expectations against registry snapshots.
 - Phase 3 event history: when the flag is on, `BeaconSession` records `HEALTH_TRANSITION` on state changes and `LOOP_TIMING` on `observe()`. Default in-memory capacity remains 256.
+- Phase 4 advisory correlator: `EventCorrelator` emits one label with confidence and evidence. Simultaneous multi-family failures without electrical/AMPER evidence are `INSUFFICIENT_EVIDENCE`. No jamming label.
 
 ### Changed
 
