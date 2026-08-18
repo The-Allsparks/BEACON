@@ -19,6 +19,10 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 
 - Stored health snapshots now apply `FreshnessPolicy` at sample time. A timestamp of `0` is `UNKNOWN`, not `HEALTHY`. Consecutive success/failure counts accumulate across reports.
 
+### Security
+
+- CI GitHub Actions (`actions/checkout`, `actions/setup-java`) are pinned to full commit SHAs with version comments.
+
 ### Safety
 
 - All motor, servo, hardware-recovery, and network-intervention features remain disabled by default.
