@@ -20,6 +20,7 @@ import org.allsparks.beacon.correlate.EventCorrelator;
 import org.allsparks.beacon.health.HealthRegistry;
 import org.allsparks.beacon.log.BeaconEvent;
 import org.allsparks.beacon.log.BeaconEventLogger;
+import org.allsparks.beacon.log.BeaconEventSink;
 import org.allsparks.beacon.log.BeaconEventType;
 import org.allsparks.beacon.preflight.PreflightExpectation;
 import org.allsparks.beacon.preflight.PreflightFinding;
@@ -39,6 +40,7 @@ public final class BeaconSession {
     private final BeaconClock clock;
     private final HealthRegistry registry;
     private final BeaconEventLogger logger;
+    private BeaconEventSink eventSink = BeaconEventSink.NOOP;
     private final Map<LinkId, LinkState> lastLoggedStates = new HashMap<>();
     private long observeCount;
     private long lastObserveDurationNanos;
@@ -73,7 +75,7 @@ public final class BeaconSession {
         long start = clock.nanoTime();
         LinkHealth health = registry.report(report);
         if (flags.isPhase1ManualReports()) {
-            logger.record(new BeaconEvent(
+            emit(new BeaconEvent(
                     start,
                     BeaconEventType.MANUAL_REPORT,
                     report.id(),
@@ -150,7 +152,7 @@ public final class BeaconSession {
             return PreflightReport.of(PreflightStatus.UNKNOWN, java.util.Collections.singletonList(finding));
         }
         PreflightReport report = PreflightInspector.evaluate(registry, expected);
-        logger.record(new BeaconEvent(
+        emit(new BeaconEvent(
                 clock.nanoTime(),
                 BeaconEventType.PREFLIGHT,
                 LinkId.of("preflight"),
@@ -178,7 +180,7 @@ public final class BeaconSession {
                     "Phase 4 advisory correlation is disabled by feature flags.");
         }
         AdvisoryReport report = EventCorrelator.evaluate(logger.snapshot(), registry.snapshot());
-        logger.record(new BeaconEvent(
+        emit(new BeaconEvent(
                 clock.nanoTime(),
                 BeaconEventType.FAILURE_DOMAIN_HINT,
                 LinkId.of("correlator"),
@@ -203,7 +205,7 @@ public final class BeaconSession {
         lastObserveDurationNanos = clock.nanoTime() - start;
         observeCount++;
         if (flags.isPhase3EventHistory()) {
-            logger.record(new BeaconEvent(
+            emit(new BeaconEvent(
                     start,
                     BeaconEventType.LOOP_TIMING,
                     LinkId.of("loop"),
@@ -219,11 +221,32 @@ public final class BeaconSession {
             return;
         }
         String from = previous == null ? "NONE" : previous.name();
-        logger.record(new BeaconEvent(
+        emit(new BeaconEvent(
                 timestampNanos,
                 BeaconEventType.HEALTH_TRANSITION,
                 health.id(),
                 health.domain(),
                 from + "->" + health.state().name()));
+    }
+
+    /**
+     * TRACE / tests implement {@link BeaconEventSink}. The in-memory ring stays.
+     * Null keeps {@link BeaconEventSink#NOOP}.
+     */
+    public BeaconSession eventSink(BeaconEventSink eventSink) {
+        this.eventSink = eventSink == null ? BeaconEventSink.NOOP : eventSink;
+        return this;
+    }
+
+    public BeaconEventSink eventSink() {
+        return eventSink;
+    }
+
+    private void emit(BeaconEvent event) {
+        logger.record(event);
+        if (eventSink == BeaconEventSink.NOOP) {
+            return;
+        }
+        eventSink.onEvent(event);
     }
 }

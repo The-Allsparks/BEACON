@@ -152,4 +152,22 @@ class BeaconSessionTest {
         assertFalse(session.isInterventionEnabled());
         assertFalse(session.flags().isPhase5DrivetrainSafeStop());
     }
+
+    @Test
+    void eventSinkSeesPhase1ManualReportAndNoopIsSilent() {
+        FakeClock clock = new FakeClock(1L);
+        java.util.ArrayList<org.allsparks.beacon.log.BeaconEvent> seen = new java.util.ArrayList<>();
+        BeaconSession session = new BeaconSession(BeaconFeatureFlags.manualReports(), clock, 16)
+                .eventSink(seen::add);
+        session.report(HealthReport.healthy(
+                LinkId.of("localization"), FailureDomain.SOFTWARE_LOOP, 1L, "Pedro"));
+        assertEquals(1, seen.size());
+        assertEquals("BEACON/localization/MANUAL_REPORT",
+                org.allsparks.beacon.log.BeaconToTraceAdapter.signalName(seen.get(0)));
+        BeaconSession silent = new BeaconSession(BeaconFeatureFlags.manualReports(), clock, 16);
+        silent.report(HealthReport.healthy(
+                LinkId.of("localization"), FailureDomain.SOFTWARE_LOOP, 1L, "Pedro"));
+        assertEquals(1, seen.size());
+        assertEquals(org.allsparks.beacon.log.BeaconEventSink.NOOP, silent.eventSink());
+    }
 }
