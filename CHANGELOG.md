@@ -9,7 +9,7 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/spec
 
 ### Added
 
-- Initial public repository scaffold for The Allsparks FTC Team 36117.
+- Optional `BeaconEventSink` / `BeaconToTraceAdapter` on `BeaconSession` (NOOP default). TRACE adapters implement the sink; BEACON does not import TRACE. The in-memory event ring stays.
 - Phase 0 implemented: identifiers, health states, immutable reports, fake clocks, fake health sources, manual registry, command-lease types, recovery-inhibit types, and bounded event logging.
 - Source-backed communications-health research, Driver Station freshness feasibility study, architecture, phased roadmap, and student documentation.
 - Initial deep audit and priority ledger under `docs/audits/`.
